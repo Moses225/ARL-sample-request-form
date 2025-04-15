@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sample Request Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #d6eaff, #ffffff);
+      margin: 0;
+      padding: 0;
+    }
+    .form-container {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      margin: 50px auto;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+    header {
+      text-align: center;
+      background-color: #166eba;
+      color: white;
+      padding: 20px;
+      border-radius: 12px 12px 0 0;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #166eba;
+      color: white;
+      font-weight: bold;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0e4f8f;
+    }
+    .hidden {
+      display: none;
+    }
+    #confirmation {
+      display: none;
+      text-align: center;
+      color: green;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    h3 {
+      margin-top: 25px;
+      color: #166eba;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <header>
+      <h1>Sample Request Form</h1>
+    </header>
+
+    <form id="sampleRequestForm">
+      <!-- Step 1: Department Selection -->
+      <div id="step1">
+        <label for="departments">Select Department(s):</label>
+        <select id="departments" multiple required>
+          <option value="Chemistry">Chemistry</option>
+          <option value="GMP/R&D">GMP/R&D</option>
+          <option value="Microbiology">Microbiology</option>
+          <option value="Routine Analytical">Routine Analytical</option>
+          <option value="Endotoxin">Endotoxin</option>
+          <option value="Sterility">Sterility</option>
+          <option value="QA">QA</option>
+          <option value="ARL Management">ARL Management</option>
+          <option value="Miscellaneous">Miscellaneous</option>
+        </select>
+        <button type="button" onclick="goToStep2()">Next</button>
+      </div>
+
+      <!-- Step 2: Request Type -->
+      <div id="step2" class="hidden">
+        <label for="requestType">Type of Request:</label>
+        <select id="requestType" required>
+          <option value="">Select</option>
+          <option value="Request to Pull Sample(s)">Request to Pull Sample(s)</option>
+          <option value="Sample is Missing">Sample is Missing</option>
+        </select>
+        <button type="button" onclick="goToStep3()">Next</button>
+      </div>
+
+      <!-- Step 3: Main Form -->
+      <div id="step3" class="hidden">
+        <div id="priorityGroup">
+          <label for="priority">Priority:</label>
+          <select id="priority" required>
+            <option value="Normal">Normal</option>
+            <option value="Rush">Rush</option>
+            <option value="Super Rush">Super Rush</option>
+          </select>
+        </div>
+
+        <div id="arlPairs">
+          <h3>ARL Number and Container Number</h3>
+          <div id="arlContainerFields"></div>
+          <button type="button" onclick="addARLPair()">Add Entry</button>
+        </div>
+
+        <div id="conditionalFields">
+          <label for="clientName">Client Name:</label>
+          <input type="text" id="clientName" name="clientName" />
+
+          <label for="sampleDueDate">Sample Due Date:</label>
+          <input type="date" id="sampleDueDate" name="sampleDueDate" />
+
+          <label for="analyte">Analyte:</label>
+          <input type="text" id="analyte" name="analyte" />
+        </div>
+
+        <label for="notes">Notes From Requester:</label>
+        <textarea id="notes" rows="4" placeholder="Add any comments or instructions..."></textarea>
+
+        <button type="submit">Submit Request(s)</button>
+      </div>
+    </form>
+
+    <div id="confirmation">
+      Your request has been submitted. An accessioner will be assigned to your request. <br/>
+      If your request is no longer needed, please contact <strong>missingsamples@arlok.com</strong>
+    </div>
+  </div>
+
+  <script>
+    let arlPairCount = 0;
+    const maxPairs = 15;
+
+    function goToStep2() {
+      document.getElementById("step1").classList.add("hidden");
+      document.getElementById("step2").classList.remove("hidden");
+    }
+
+    function goToStep3() {
+      document.getElementById("step2").classList.add("hidden");
+      document.getElementById("step3").classList.remove("hidden");
+      const requestType = document.getElementById("requestType").value;
+      document.getElementById("conditionalFields").style.display = requestType === "Sample is Missing" ? "block" : "none";
+    }
+
+    function addARLPair() {
+      if (arlPairCount >= maxPairs) return alert("Maximum 15 entries allowed.");
+      arlPairCount++;
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = `
+        <label>ARL Number ${arlPairCount}:</label>
+        <input type="text" name="arl${arlPairCount}" required />
+        <label>Container Number ${arlPairCount}:</label>
+        <input type="text" name="container${arlPairCount}" required />
+      `;
+      document.getElementById("arlContainerFields").appendChild(wrapper);
+    }
+
+    document.getElementById("sampleRequestForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      document.getElementById("sampleRequestForm").style.display = "none";
+      document.getElementById("confirmation").style.display = "block";
+    });
+  </script>
+</body>
+</html>
