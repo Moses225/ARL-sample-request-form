@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  "></script>
+  <script type="text/javascript">
+    (function() {
+      emailjs.init("kFUuDieK7VOqu_CFm");
+    })();
+  </script>
+  
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -5748,10 +5756,37 @@
     }
 
     document.getElementById("sampleRequestForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      document.getElementById("sampleRequestForm").style.display = "none";
-      document.getElementById("confirmation").style.display = "block";
-    });
-  </script>
+    e.preventDefault();
+
+    const form = document.getElementById("sampleRequestForm");
+
+    const arlNumbers = [];
+    const containerNumbers = [];
+
+    for (let i = 1; i <= arlPairCount; i++) {
+      const arl = form.querySelector(`input[name="arl${i}"]`)?.value;
+      const container = form.querySelector(`input[name="container${i}"]`)?.value;
+      if (arl) arlNumbers.push(arl);
+      if (container) containerNumbers.push(container);
+    }
+
+    const emailParams = {
+      departments: Array.from(document.getElementById("departments").selectedOptions).map(o => o.value).join(", "),
+      request_type: document.getElementById("requestType").value,
+      arl_numbers: arlNumbers.join(", "),
+      container_number: containerNumbers.join(", "),
+    };
+
+    emailjs.send("service_flug37m", "template_qyphv5g", emailParams)
+      .then(function(response) {
+        form.style.display = "none";
+        document.getElementById("confirmation").style.display = "block";
+      }, function(error) {
+        alert("There was an issue submitting your request. Please try again later.");
+        console.error(error);
+      });
+  });
+</script>
+
 </body>
 </html>
