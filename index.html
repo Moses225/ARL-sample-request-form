@@ -5769,13 +5769,25 @@
       if (arl) arlNumbers.push(arl);
       if (container) containerNumbers.push(container);
     }
+    const sampleDueDates = [];
+for (let i = 1; i <= arlPairCount; i++) {
+  const dueDate = form.querySelector(`input[name="sampleDueDate${i}"]`)?.value;
+  if (dueDate) sampleDueDates.push(dueDate);
+}
+
 
     const emailParams = {
-      departments: Array.from(document.getElementById("departments").selectedOptions).map(o => o.value).join(", "),
-      request_type: document.getElementById("requestType").value,
-      arl_numbers: arlNumbers.join(", "),
-      container_number: containerNumbers.join(", "),
-    };
+  departments: Array.from(document.getElementById("departments").selectedOptions).map(o => o.value).join(", "),
+  request_type: document.getElementById("requestType").value,
+  priority: document.getElementById("priority").value,
+  client_name: document.getElementById("clientName").value,
+  analyte: document.getElementById("analyte").value,
+  notes: document.getElementById("notes").value,
+  arl_numbers: arlNumbers.join(", "),
+  container_numbers: containerNumbers.join(", "),
+  sample_due_dates: sampleDueDates.join(", ")
+};
+
 
     emailjs.send("service_flug37m", "template_qyphv5g", emailParams)
       .then(function(response) {
